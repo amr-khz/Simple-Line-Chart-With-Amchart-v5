@@ -1,7 +1,6 @@
 $(document).ready(function () {
 
     //Define variables needed for rebuling chart
-    // let root;
     window.root = null;
     window.xAxis = null;
     window.data = null;
@@ -13,6 +12,27 @@ $(document).ready(function () {
     chartCreatorFunction(data , chartName , 0x14c276);
 
     
+    $('.buttons a').on("click", function () {
+
+        // Get the actual value from button
+        var period = $(this).attr('class');
+
+        // Switch case for different periods
+        switch (period) {
+            case 'oneweek':
+              xAxis.zoomToIndexes(data.length - 7, data.length);
+              break;
+            case 'onemonth':
+              xAxis.zoomToIndexes(data.length - 30, data.length);
+              break;
+            case 'oneyear':
+              xAxis.zoomToIndexes(data.length - 365, data.length);
+              break;
+            case 'alltime':
+              xAxis.zoomToIndexes(0, data.length);
+              break;
+        }
+    });
 
 });
 
