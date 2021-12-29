@@ -1,6 +1,7 @@
 $(document).ready(function () {
 
     //Define variables needed for rebuling chart
+    // let root;
     window.root = null;
     window.xAxis = null;
     window.data = null;
@@ -9,8 +10,9 @@ $(document).ready(function () {
 
     data = fetchJSONData();
 
+    chartCreatorFunction(data , chartName , 0x14c276);
 
-
+    
 
 });
 
@@ -19,6 +21,131 @@ $(document).ready(function () {
 
 
 function chartCreatorFunction(data, chartName, color) {
+
+
+    
+    root = am5.Root.new(chartName);
+
+    root.setThemes([
+        am5themes_Animated.new(root)
+    ]);
+
+    
+    let chart = root.container.children.push(
+
+        am5xy.XYChart.new(root, {
+            panX: true,
+            panY: true,
+            wheelX: "panX",
+            wheelY: "zoomX",
+            paddingBottom: 30,
+            paddingRight: 30,
+            paddingLeft: 20,
+            paddingTop: 20
+        })
+    );
+
+
+
+    var cursor = chart.set("cursor", am5xy.XYCursor.new(root, {
+        behavior: "none"
+    }));
+    cursor.lineY.set("visible", false);
+
+
+    // Create Y-axis
+    var yRenderer = am5xy.AxisRendererY.new(root, {});
+
+    var yAxis = chart.yAxes.push(
+        am5xy.ValueAxis.new(root, {
+            renderer: yRenderer
+        })
+    );
+
+    // Craete X-axis
+    var xRenderer = am5xy.AxisRendererX.new(root, {});
+    xRenderer.grid.template.set("visible", false);
+
+    xAxis = chart.xAxes.push(
+        am5xy.CategoryAxis.new(root, {
+            renderer: xRenderer,
+            categoryField: "date",
+        })
+    );
+
+    xAxis.data.setAll(data);
+
+
+    xRenderer.labels.template.setAll({
+        fill: am5.color(0x000000),
+        fontSize : "12px",
+        marginTop : 30,
+        paddingTop : 20,
+        draggable: true
+    });
+
+    yRenderer.labels.template.setAll({
+        fill: am5.color(0x000000),
+        fontSize : "12px",
+        paddingRight : 20,
+        draggable: true
+    });
+
+    // Create series
+    var series = chart.series.push(
+        am5xy.LineSeries.new(root, {
+            name: "Series",
+            xAxis: xAxis,
+            yAxis: yAxis,
+            valueYField: "price",
+            categoryXField: "date",
+            tooltip: am5.Tooltip.new(root, {
+                labelText: "{valueY}"
+            })
+        })
+    );
+
+
+
+    series.bullets.push(function () {
+        return am5.Bullet.new(root, {
+            sprite: am5.Circle.new(root, {
+                radius: 5,
+                fill: series.get("fill")
+            })
+        });
+    });
+
+    series.data.setAll(data);
+
+    series.strokes.template.set("strokeWidth", 2);
+    series.fills.template.setAll({
+        visible: true,
+        fillOpacity: 0.4
+    });
+
+
+    series.set("fill", am5.color(color));
+    series.set("stroke", am5.color(color));
+
+    var scrollbarX = am5xy.XYChartScrollbar.new(root, {
+        
+        orientation: "horizontal",
+        height: 20,
+        marginBottom: 20
+    });
+
+    chart.set("scrollbarX", scrollbarX);
+
+
+
+    xAxis.zoomToIndexes(data.length - 30, data.length);
+
+
+
+
+    series.appear(500);
+    chart.appear(500, 100);
 
 
 
