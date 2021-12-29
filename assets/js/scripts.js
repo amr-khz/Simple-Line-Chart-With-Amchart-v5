@@ -158,7 +158,7 @@ function chartCreatorFunction(data, chartName, color) {
     chart.set("scrollbarX", scrollbarX);
 
 
-
+    // Initial zoom for chart is 30 days
     xAxis.zoomToIndexes(data.length - 30, data.length);
 
 
